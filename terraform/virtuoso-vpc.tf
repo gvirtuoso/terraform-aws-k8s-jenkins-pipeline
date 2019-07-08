@@ -10,7 +10,7 @@ module "vpc" {
 
     tags = {
         // This is the way kops knows that the VPC resources can be used for k8s
-        "kubernetes.io/cluster/${local.kubernetes_cluster_name}" = "shared"
+        "kubernetes.io/cluster/${local.k8s_cluster_name}" = "shared"
         "terraform"   = true
         "environment" = "${local.environment}"
     }
