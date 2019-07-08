@@ -1,4 +1,3 @@
-
 provider "aws" {
   region = "us-east-1"
 }
@@ -24,4 +23,9 @@ locals {
   vpc_public_subnets        = ["172.42.10.0/24", "172.42.11.0/24", "172.42.12.0/24"]
   vpc_private_subnets       = ["172.42.20.0/24", "172.42.21.0/24", "172.42.22.0/24"]
   kubernetes_cluster_name   = "${local.environment}-k8s.guilhermevirtuoso.com" 
+  kops_state_bucket_name    = "guilhermevirtuoso-kops-state"
+  tags = {
+    environment = "${local.environment}"
+    terraform   = true
+  }
 }
