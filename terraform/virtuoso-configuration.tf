@@ -31,3 +31,5 @@ locals {
     terraform   = true
   }
 }
+
+data "aws_region" "current" {}
