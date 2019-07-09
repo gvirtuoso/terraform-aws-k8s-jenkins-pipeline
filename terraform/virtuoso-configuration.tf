@@ -21,7 +21,7 @@ locals {
   vpc_cidr                 = "172.42.0.0/16"
   vpc_public_subnets       = ["172.42.10.0/24", "172.42.11.0/24", "172.42.12.0/24"]
   vpc_private_subnets      = ["172.42.20.0/24", "172.42.21.0/24", "172.42.22.0/24"]
-  k8s_version              = "1.14.3"
+  k8s_version              = "1.11.10"
   k8s_cluster_name         = "${local.environment}-k8s.${local.route53_host_zone}"
   k8s_master_instance_type = "t2.medium"
   k8s_master_instance_min  = 1
@@ -32,7 +32,7 @@ locals {
   k8s_ingress_ips          = ["172.0.0.0/8"]
   kops_state_bucket_name   = "${local.application}-kops-state-${local.environment}"
   tags = {
-    environment = local.environment
+    environment = "${local.environment}"
     terraform   = true
   }
 }
