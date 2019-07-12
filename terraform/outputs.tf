@@ -81,3 +81,8 @@ output "k8s_common_http_sg_id" {
 output "kops_s3_bucket" {
   value = "${aws_s3_bucket.kops_state.bucket}"
 }
+
+output "acm_certificate_arn" {
+  value = "${aws_acm_certificate.cert.arn}"
+
+}
