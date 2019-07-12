@@ -15,7 +15,13 @@ echo "Kops State.....: ${STATE}"
 mkdir -p output
 
 echo "===================================================="
-echo "Ingress Controller"
-echo "===================================================="
 echo "Generating Add On yaml file..."
+echo "===================================================="
+echo "Ingress Controller..."
 kops toolbox template --name ${CLUSTER_NAME} --values <( echo ${TF_OUTPUT}) --template templates/nginx-ingress-controller-template.yaml --format-yaml > output/nginx-ingress-controller.yaml
+
+echo "Heapster..."
+kops toolbox template --name ${CLUSTER_NAME} --values <( echo ${TF_OUTPUT}) --template templates/heapster-template.yaml --format-yaml > output/heapster.yaml
+
+echo "Dashboard admin user"
+kops toolbox template --name ${CLUSTER_NAME} --values <( echo ${TF_OUTPUT}) --template templates/dashboard-admin-user-template.yaml --format-yaml > output/dashboard-admin-user.yaml
