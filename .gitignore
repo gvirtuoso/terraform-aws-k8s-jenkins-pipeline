@@ -121,7 +121,5 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/git,helm,linux,macos,windows,terraform
 
-# kops temp file
-kubernetes/cluster.yaml
-kubernetes/kubernetes.tf
-kubernetes/data/*
+# Temp files
+kubernetes/output/*
