@@ -1,6 +1,3 @@
-# https://github.com/kubernetes/kops/blob/master/docs/cluster_template.md
-# https://golang.org/pkg/text/template/
-
 # Creating cluster
 apiVersion: kops/v1alpha2
 kind: Cluster
@@ -10,6 +7,7 @@ spec:
   api:
     loadBalancer:
       type: Public
+      sslCertificate: "{{.acm_certificate_arn.value}}"
       additionalSecurityGroups: ["{{.k8s_common_http_sg_id.value}}"]
   authorization:
     rbac: {}
@@ -62,7 +60,6 @@ spec:
     masters: private
     nodes: private
 ---
-
   # Creating masters
 {{range .availability_zones.value}}
 apiVersion: kops/v1alpha2
@@ -82,7 +79,6 @@ spec:
   - {{.}}
 ---
 {{end}}
-
 # Creating nodes
 apiVersion: kops/v1alpha2
 kind: InstanceGroup
