@@ -120,3 +120,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/git,helm,linux,macos,windows,terraform
+
+# Temp files
+kubernetes/output/*

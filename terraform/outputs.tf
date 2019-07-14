@@ -35,15 +35,43 @@ output "default_security_group_id" {
 }
 
 output "nat_gateway_ids" {
-  value = "${module.vpc.natgw_ids}"
+  value = ["${module.vpc.natgw_ids}"]
 }
 
 output "availability_zones" {
   value = ["${local.vpc_azs}"]
 }
 
+output "k8s_version" {
+  value = "${local.k8s_version}"
+}
+
 output "k8s_cluster_name" {
   value = "${local.k8s_cluster_name}"
+}
+
+output "k8s_master_instance_type" {
+  value = "${local.k8s_master_instance_type}"
+}
+
+output "k8s_master_instance_min" {
+  value = "${local.k8s_master_instance_min}"
+}
+
+output "k8s_master_instance_max" {
+  value = "${local.k8s_master_instance_max}"
+}
+
+output "k8s_node_instance_type" {
+  value = "${local.k8s_node_instance_type}"
+}
+
+output "k8s_node_instance_min" {
+  value = "${local.k8s_node_instance_min}"
+}
+
+output "k8s_node_instance_max" {
+  value = "${local.k8s_node_instance_max}"
 }
 
 output "k8s_common_http_sg_id" {
@@ -52,4 +80,16 @@ output "k8s_common_http_sg_id" {
 
 output "kops_s3_bucket" {
   value = "${aws_s3_bucket.kops_state.bucket}"
+}
+
+output "letsencrypt_email" {
+  value = "${local.letsencrypt_email}"
+}
+
+output "jenkins_admin_user" {
+  value = "${local.jenkins_admin_user}"
+}
+
+output "jenkins_admin_password" {
+  value = "${local.jenkins_admin_password}"
 }

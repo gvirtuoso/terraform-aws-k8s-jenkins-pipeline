@@ -1,0 +1,115 @@
+# Creating cluster
+apiVersion: kops/v1alpha2
+kind: Cluster
+metadata:
+  name: {{.k8s_cluster_name.value}}
+spec:
+  additionalPolicies:
+    master: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": "*",
+          "Resource": "*"
+        }
+      ]
+    node: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": "*",
+          "Resource": "*"
+        }
+      ]
+  api:
+    loadBalancer:
+      type: Public
+      additionalSecurityGroups: ["{{.k8s_common_http_sg_id.value}}"]
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://{{.kops_s3_bucket.value}}/{{.k8s_cluster_name.value}}
+  # Create one etcd member per AZ
+  etcdClusters:
+  - etcdMembers:
+  {{range $i, $az := .availability_zones.value}}
+    - instanceGroup: master-{{.}}
+      name: {{. | replace $.region.value "" }}
+  {{end}}
+    name: main
+  - etcdMembers:
+  {{range $i, $az := .availability_zones.value}}
+    - instanceGroup: master-{{.}}
+      name: {{. | replace $.region.value "" }}
+  {{end}}
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubernetesVersion: {{.k8s_version.value}}
+  masterPublicName: api.{{.k8s_cluster_name.value}}
+  networkCIDR: {{.vpc_cidr_block.value}}
+  networkID: {{.vpc_id.value}}
+  networking:
+    canal: {}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  subnets:
+  # Public (utility) subnets, one per AZ
+  {{range $i, $id := .public_subnet_ids.value}}
+  - id: {{.}}
+    name: utility-{{index $.availability_zones.value $i}}
+    type: Utility
+    zone: {{index $.availability_zones.value $i}}
+  {{end}}
+  # Private subnets, one per AZ
+  {{range $i, $id := .private_subnet_ids.value}}
+  - id: {{.}}
+    name: {{index $.availability_zones.value $i}}
+    type: Private
+    zone: {{index $.availability_zones.value $i}}
+    egress: {{index $.nat_gateway_ids.value $i}}
+  {{end}}
+  topology:
+    dns:
+      type: Public
+    masters: private
+    nodes: private
+---
+  # Creating masters
+{{range .availability_zones.value}}
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: {{$.k8s_cluster_name.value}}
+  name: master-{{.}}
+spec:
+  image: kope.io/k8s-1.10-debian-stretch-amd64-hvm-ebs-2018-08-17
+  kubernetesVersion: {{$.k8s_version.value}}
+  machineType: {{$.k8s_master_instance_type.value}}
+  maxSize: {{$.k8s_master_instance_min.value}}
+  minSize: {{$.k8s_master_instance_max.value}}
+  role: Master
+  subnets:
+  - {{.}}
+---
+{{end}}
+# Creating nodes
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: {{.k8s_cluster_name.value}}
+  name: nodes
+spec:
+  image: kope.io/k8s-1.10-debian-stretch-amd64-hvm-ebs-2018-08-17
+  kubernetesVersion: {{$.k8s_version.value}}
+  machineType: {{$.k8s_node_instance_type.value}}
+  maxSize: {{$.k8s_node_instance_min.value}}
+  minSize: {{$.k8s_node_instance_max.value}}
+  role: Node
+  subnets:
+  {{range .availability_zones.value}}
+  - {{.}}
+  {{end}}

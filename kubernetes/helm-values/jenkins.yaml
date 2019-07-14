@@ -1,0 +1,40 @@
+---
+master:
+  numExecutors: 2
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "1024Mi"
+  serviceType: ClusterIP
+  installPlugins:
+    - kubernetes:latest
+    - kubernetes-credentials:latest
+    - workflow-aggregator:latest
+    - workflow-job:latest
+    - credentials-binding:latest
+    - git:latest
+    - blueocean:latest
+    - buildtriggerbadge:latest
+    - greenballs:latest
+    - job-dsl:latest
+    - job-restrictions:latest
+    - jobConfigHistory:latest
+    - saferestart:latest
+    - timestamper:latest
+    - ws-cleanup:latest
+  JCasC: 
+    enabled: true
+    configScripts:
+      welcome-message: |
+        jenkins:
+          systemMessage: Welcome to our CI\CD server. This Jenkins is configured and managed 'as code'.
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+
+persistence:
+  enabled: true
+  storageClass: "gp2"
+  size: "16Gi"
