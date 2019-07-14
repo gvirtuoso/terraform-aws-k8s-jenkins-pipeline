@@ -1,0 +1,4 @@
+---
+ingressShim:
+  defaultIssuerName: "letsencrypt-prod"
+  defaultIssuerKind: "ClusterIssuer"

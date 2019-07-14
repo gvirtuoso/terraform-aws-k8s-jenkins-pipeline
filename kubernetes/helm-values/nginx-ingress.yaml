@@ -1,0 +1,5 @@
+---
+controller:
+  service:
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: "*.prod-k8s.guilhermevirtuoso.com"
