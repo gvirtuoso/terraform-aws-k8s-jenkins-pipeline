@@ -13,6 +13,7 @@ master:
     - workflow-job:latest
     - credentials-binding:latest
     - git:latest
+    - ghprb:latest
     - blueocean:latest
     - buildtriggerbadge:latest
     - greenballs:latest
@@ -22,12 +23,136 @@ master:
     - saferestart:latest
     - timestamper:latest
     - ws-cleanup:latest
+    - pipeline-github-lib:latest
+  initScripts:
+    jenkins_config_system: |-
+      import jenkins.model.*
+      import jenkins.security.*
+      import hudson.model.*
+
+      // ----------------------------------------------
+      // -- Getting Jenkins Instance
+      // ----------------------------------------------
+      def jenkinsInstance = Jenkins.getInstance()
+
+      // ----------------------------------------------
+      // -- Administrative Monitors Configuration
+      // ----------------------------------------------
+      for(AdministrativeMonitor monitor : jenkinsInstance.administrativeMonitors) {
+        if(monitor instanceof UpdateCenter.CoreUpdateMonitor) {
+          monitor.disable(true)
+        }
+        if(monitor instanceof UpdateSiteWarningsMonitor) {
+          monitor.disable(true)
+        }
+      }
+
+      // ----------------------------------------------
+      // -- Saving Jenkins modifications
+      // ----------------------------------------------
+      jenkinsInstance.save()
+
+    jenkins_global_security: |-
+      import hudson.*
+      import hudson.model.*
+      import hudson.security.*
+      import jenkins.*
+      import jenkins.model.*
+      import jenkins.security.s2m.*
+      import javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration
+
+      // Changing DSL script security
+      GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).useScriptSecurity=false
+      GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).save()
+
+  jobs:
+    job-dsl-seeder: |-
+      <?xml version='1.1' encoding='UTF-8'?>
+      <project>
+        <description>This job creates the entire jobs of the infrastructure reading from https://github.com/gvirtuoso/terraform-aws-k8s-jenkins-pipeline</description>
+        <displayName>Job DSL Seeder</displayName>
+        <keepDependencies>false</keepDependencies>
+        <properties>
+          <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+              <hudson.model.StringParameterDefinition>
+                <name>github_branch_name</name>
+                <description>Github branch name</description>
+                <defaultValue>master</defaultValue>
+                <trim>true</trim>
+              </hudson.model.StringParameterDefinition>
+            </parameterDefinitions>
+          </hudson.model.ParametersDefinitionProperty>
+        </properties>
+        <scm class="hudson.plugins.git.GitSCM">
+          <configVersion>2</configVersion>
+          <userRemoteConfigs>
+            <hudson.plugins.git.UserRemoteConfig>
+              <url>https://github.com/gvirtuoso/terraform-aws-k8s-jenkins-pipeline.git</url>
+              <credentialsId>github</credentialsId>
+            </hudson.plugins.git.UserRemoteConfig>
+          </userRemoteConfigs>
+          <branches>
+            <hudson.plugins.git.BranchSpec>
+              <name>*/${github_branch_name}</name>
+            </hudson.plugins.git.BranchSpec>
+          </branches>
+          <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        </scm>
+        <canRoam>true</canRoam>
+        <disabled>false</disabled>
+        <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+        <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+        <concurrentBuild>false</concurrentBuild>
+        <builders>
+          <javaposse.jobdsl.plugin.ExecuteDslScripts>
+            <targets>**/*.groovy</targets>
+            <usingScriptText>false</usingScriptText>
+            <sandbox>false</sandbox>
+            <ignoreExisting>false</ignoreExisting>
+            <ignoreMissingFiles>false</ignoreMissingFiles>
+            <failOnMissingPlugin>false</failOnMissingPlugin>
+            <failOnSeedCollision>false</failOnSeedCollision>
+            <unstableOnDeprecation>false</unstableOnDeprecation>
+            <removedJobAction>DELETE</removedJobAction>
+            <removedViewAction>DELETE</removedViewAction>
+            <removedConfigFilesAction>DELETE</removedConfigFilesAction>
+            <lookupStrategy>JENKINS_ROOT</lookupStrategy>
+          </javaposse.jobdsl.plugin.ExecuteDslScripts>
+        </builders>
+        <publishers>
+          <hudson.tasks.ArtifactArchiver>
+            <artifacts>**/*.groovy</artifacts>
+            <allowEmptyArchive>false</allowEmptyArchive>
+            <onlyIfSuccessful>false</onlyIfSuccessful>
+            <fingerprint>false</fingerprint>
+            <defaultExcludes>true</defaultExcludes>
+            <caseSensitive>true</caseSensitive>
+          </hudson.tasks.ArtifactArchiver>
+          <hudson.plugins.ws__cleanup.WsCleanup>
+            <deleteDirs>false</deleteDirs>
+            <skipWhenFailed>false</skipWhenFailed>
+            <cleanWhenSuccess>true</cleanWhenSuccess>
+            <cleanWhenUnstable>true</cleanWhenUnstable>
+            <cleanWhenFailure>true</cleanWhenFailure>
+            <cleanWhenNotBuilt>true</cleanWhenNotBuilt>
+            <cleanWhenAborted>true</cleanWhenAborted>
+            <notFailBuild>false</notFailBuild>
+            <cleanupMatrixParent>false</cleanupMatrixParent>
+            <disableDeferredWipeout>false</disableDeferredWipeout>
+          </hudson.plugins.ws__cleanup.WsCleanup>
+        </publishers>
+        <buildWrappers/>
+      </project>
   JCasC: 
     enabled: true
     configScripts:
       welcome-message: |
         jenkins:
           systemMessage: Welcome to our CI\CD server. This Jenkins is configured and managed 'as code'.
+    security:
+      GlobalJobDslSecurityConfiguration:
+        useScriptSecurity: false
   ingress:
     enabled: true
     annotations:
