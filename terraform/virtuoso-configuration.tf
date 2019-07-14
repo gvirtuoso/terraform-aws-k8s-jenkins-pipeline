@@ -31,6 +31,9 @@ locals {
   k8s_node_instance_max    = 2
   k8s_ingress_ips          = ["172.0.0.0/8"]
   kops_state_bucket_name   = "${local.application}-kops-state-${local.environment}"
+  letsencrypt_email        = "ssl-alert@${local.route53_host_zone}"
+  jenkins_admin_user       = "admin"
+  jenkins_admin_password   = "admin" 
   tags = {
     environment = "${local.environment}"
     terraform   = true

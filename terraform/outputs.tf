@@ -82,7 +82,14 @@ output "kops_s3_bucket" {
   value = "${aws_s3_bucket.kops_state.bucket}"
 }
 
-output "acm_certificate_arn" {
-  value = "${aws_acm_certificate.cert.arn}"
+output "letsencrypt_email" {
+  value = "${local.letsencrypt_email}"
+}
 
+output "jenkins_admin_user" {
+  value = "${local.jenkins_admin_user}"
+}
+
+output "jenkins_admin_password" {
+  value = "${local.jenkins_admin_password}"
 }
