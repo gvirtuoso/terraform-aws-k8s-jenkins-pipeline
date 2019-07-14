@@ -68,3 +68,9 @@ helm install stable/jenkins \
 --set "master.ingress.hostName=jenkins.${CLUSTER_NAME}" \
 --set "master.ingress.tls[0].secretName=jenkins-tls-cert" \
 --set "master.ingress.tls[0].hosts[0]=jenkins.${CLUSTER_NAME}"
+
+kubectl create clusterrolebinding permissive-binding \
+--clusterrole=cluster-admin \
+--user=admin \
+--user=kubelet \
+--group=system:serviceaccounts:jenkins
