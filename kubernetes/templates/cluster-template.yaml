@@ -4,10 +4,26 @@ kind: Cluster
 metadata:
   name: {{.k8s_cluster_name.value}}
 spec:
+  additionalPolicies:
+    master: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": "*",
+          "Resource": "*"
+        }
+      ]
+    node: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": "*",
+          "Resource": "*"
+        }
+      ]
   api:
     loadBalancer:
       type: Public
-      sslCertificate: "{{.acm_certificate_arn.value}}"
       additionalSecurityGroups: ["{{.k8s_common_http_sg_id.value}}"]
   authorization:
     rbac: {}
