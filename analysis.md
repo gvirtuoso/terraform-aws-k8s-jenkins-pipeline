@@ -16,6 +16,9 @@
 - Use labels on k8s to deploy specific type of apps on specific type of nodes;
 - Configuring rolling updates for the environment using kops incase you change something on the kubernetes cluster;
   - kops rolling-update cluster --name ${CLUSTER_NAME} --state ${STATE} --node-interval 2m --instance-group nodes --force --yes
+- Add monitoring infrastructure with Prometheus and Grafana
+- Add alarm system like Pagerduty
+- Add centralized log system like Cloudwatch or Graylog
 
 ---
 
