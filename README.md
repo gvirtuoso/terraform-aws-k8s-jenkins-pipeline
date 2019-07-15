@@ -20,7 +20,7 @@ I'll encourage you to run the project even if you have a different version of an
 
 
 ### 1.1) Tools
-- Terraform - `v0.11.13` - [MacOS](https://releases.hashicorp.com/terraform/0.11.13/https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_darwin_amd64.zip) / [Linux](https://releases.hashicorp.com/terraform/0.11.13/https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip)
+- Terraform - `v0.11.13` - [MacOS](https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_darwin_amd64.zip) / [Linux](https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip)
 - Kops - `v1.11.1` - [MacOS](https://github.com/kubernetes/kops/releases/download/1.11.1/kops-darwin-amd64) / [Linux](https://github.com/kubernetes/kops/releases/download/1.11.1/kops-linux-amd64)
 - Kubectl - `v1.11.10` - [MacOS](https://storage.googleapis.com/kubernetes-release/release/v1.11.10/bin/darwin/amd64/kubectl) / [Linux](https://storage.googleapis.com/kubernetes-release/release/v1.11.10/bin/linux/amd64/kubectl)
 - Helm - `2.14.1`- [MacOS](https://get.helm.sh/helm-v2.14.1-darwin-amd64.tar.gz) / [Linux](https://get.helm.sh/helm-v2.14.1-linux-amd64.tar.gz)
@@ -191,7 +191,7 @@ In my case this script tooks 6 minutes in average to run.
 
 If everything works properly, now you will be able to access your CI/CD server.  
 According to my configurations, I'm able to access the server using the info below:
-- [http://jenkins.prod-k8s.guilhermevirtuoso.com](http://jenkins.prod-k8s.guilhermevirtuoso.com)
+- [https://jenkins.prod-k8s.guilhermevirtuoso.com](https://jenkins.prod-k8s.guilhermevirtuoso.com)
 - User: `admin`
 - Password: `admin`
 
